@@ -13,8 +13,8 @@ class TaskController {
   final storage = FlutterSecureStorage();
   late String? value;
 
-  addTask(var date, var startTime, var endTime, String status,
-      BuildContext context) async {
+  addTask(var date, var startTime, var endTime, String status, String taskName,
+      String desc, BuildContext context) async {
     value = await storage.read(key: "token");
     log("date" + date);
     log("startTime" + startTime);
@@ -51,11 +51,13 @@ class TaskController {
     Map<String, dynamic> params = {
       "date": date,
       "projectName": "Qbace",
-      "taskName": "forgot password",
+      "userId": "1002",
+      "projectId": "1002",
+      "taskName": taskName,
       "status": status,
       "startTime": startTime,
       "endTime": endTime,
-      "description": "forgot password",
+      "description": desc,
     };
     log(params.toString());
 
@@ -98,7 +100,7 @@ class TaskController {
     }
   }
 
-  Future<List> getProjectName() async {
+  Future getProjectName() async {
     value = await storage.read(key: "token");
 
     var headers = {HttpHeaders.authorizationHeader: 'Bearer $value'};
@@ -112,11 +114,12 @@ class TaskController {
       print("RES--->" + response.statusCode.toString());
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
-        var length = data["data"]["noRecords"];
-        for (int i = 0; i < length; i++) {
-          projectsName
-              .add(data["data"]["records"][i]["projectName"].toString());
-        }
+        return data;
+        // var length = data["data"]["noRecords"];
+        // for (int i = 0; i < length; i++) {
+        //   projectsName
+        //       .add(data["data"]["records"][i]["projectName"].toString());
+        // }
       }
     } catch (e) {
       print(e.toString());

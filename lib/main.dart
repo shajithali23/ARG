@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:report_generator/screens/home_page.dart';
 import 'package:report_generator/screens/sign_in.dart';
 
 import 'screens/task_page.dart';
@@ -18,7 +19,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   final storage = FlutterSecureStorage();
 
-  late String? value;
+  late String? value, id;
 
   Widget home = Scaffold(
       body: Container(
@@ -36,14 +37,16 @@ class _MyAppState extends State<MyApp> {
 
   check() async {
     value = await storage.read(key: "token");
+    id = await storage.read(key: "id");
     print(value);
+    print(id);
     if (value == null) {
       setState(() {
-        home = SignIn();
+        home = HomePage();
       });
     } else {
       setState(() {
-        home = TaskPage();
+        home = HomePage();
       });
     }
   }

@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:report_generator/controller/task_controller.dart';
 import 'package:http/http.dart' as http;
+import 'package:report_generator/models/project_model.dart';
 
 class TaskPage extends StatefulWidget {
   const TaskPage({Key? key}) : super(key: key);
@@ -36,6 +37,7 @@ class _TaskPageState extends State<TaskPage>
   TaskController controller = TaskController();
   String? _endTime;
   String dropdownValue = 'One';
+  List<Project> countryList = [];
 
   @override
   void initState() {
@@ -44,18 +46,28 @@ class _TaskPageState extends State<TaskPage>
     formatter = DateFormat('yMd').format(now);
     dateController.text = formatter;
     print("A");
-    // getData();
+    getData();
   }
 
   getData() async {
-    List pro = await controller.getProjectName();
+    var pro = await controller.getProjectName();
+    var projects = pro as Map;
+    print(projects["data"]["records"][0]['projectName']);
+    //  for (final name in projects.keys) {
+    //         final value = projects[name];
+    //         print('$name,$value'); // prints entries like "AED,3.672940"
+    //         await storage.write(
+    //           key: name,
+    //           value: value.toString(),
+    //         );
+    //       }
     // projectNameList = controller.getProjectName();
-    setState(() {
-      projectNameList;
-    });
-    projectNameList.toString();
-    projectNameList = pro.cast<String>();
-    print(pro.runtimeType);
+    // setState(() {
+    //   projectNameList;
+    // });
+    // projectNameList.toString();
+    // projectNameList = pro.cast<String>();
+    print(projects.runtimeType);
 
     print("EXECUTE");
   }
@@ -182,23 +194,6 @@ class _TaskPageState extends State<TaskPage>
                                         ),
                                         TextFormField(
                                           decoration: InputDecoration(
-                                              suffix: DropdownButton(
-                                                items: <String>[
-                                                  'One',
-                                                  'Two',
-                                                  'Free',
-                                                  'Four'
-                                                ].map<DropdownMenuItem<String>>(
-                                                    (String value) {
-                                                  return DropdownMenuItem<
-                                                      String>(
-                                                    value: value,
-                                                    child: Text(value),
-                                                  );
-                                                }).toList(),
-                                                onChanged: (newVal) {},
-                                                value: dropdownValue,
-                                              ),
                                               border: OutlineInputBorder()),
                                         )
                                       ],
@@ -423,6 +418,7 @@ class _TaskPageState extends State<TaskPage>
                                   TextFormField(
                                     minLines: 2,
                                     maxLines: null,
+                                    controller: taskDescription,
                                     decoration: InputDecoration(
                                         border: OutlineInputBorder()),
                                   )
@@ -455,6 +451,8 @@ class _TaskPageState extends State<TaskPage>
                                           startTimeController.text,
                                           endTimeController.text,
                                           status,
+                                          taskName.text,
+                                          taskDescription.text,
                                           context);
                                     },
                                     child: Container(
