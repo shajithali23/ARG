@@ -3,6 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:report_generator/screens/home_page.dart';
 import 'package:report_generator/screens/sign_in.dart';
 
+import 'screens/report_generate_page.dart';
 import 'screens/task_page.dart';
 
 void main() {
@@ -42,7 +43,7 @@ class _MyAppState extends State<MyApp> {
     print(id);
     if (value == null) {
       setState(() {
-        home = HomePage();
+        home = ReportGenerate();
       });
     } else {
       setState(() {
