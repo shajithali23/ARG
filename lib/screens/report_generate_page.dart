@@ -1,10 +1,14 @@
+import 'dart:developer';
 import 'dart:html';
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:intl/intl.dart';
+
+import '../controller/task_controller.dart';
 
 class ReportGenerate extends StatefulWidget {
   ReportGenerate({Key? key}) : super(key: key);
@@ -14,13 +18,25 @@ class ReportGenerate extends StatefulWidget {
 }
 
 class _ReportGenerateState extends State<ReportGenerate> {
-  var list = ["1", "2", "3"];
+  final storage = FlutterSecureStorage();
+  late String? token;
+
+  var status_list = ["In Progress", "Completed"];
+  var project_list = ["Morphfit", "Qbace", "TrueKarma"];
 
   String _currentSelectedValue = 'Morphfit';
   String _currentSelectedStatus = 'In Progress';
   late String _hour, _minute, _time;
+  bool selectedStatus = false;
+  bool selectedProject = false;
+  List storeDatas = [];
 
   final dateController = TextEditingController();
+  TaskController controller = TaskController();
+  TextEditingController project_name = TextEditingController();
+  TextEditingController task_name = TextEditingController();
+  TextEditingController issue_id = TextEditingController();
+  TextEditingController descriptions = TextEditingController();
   TextEditingController start_time = TextEditingController();
 
   TextEditingController end_time = TextEditingController();
@@ -34,9 +50,14 @@ class _ReportGenerateState extends State<ReportGenerate> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    getToken();
     formatter = DateFormat('dd-MM-y').format(now);
     print("DATE" + formatter);
     dateController.text = formatter;
+  }
+
+  getToken() async {
+    token = await storage.read(key: "token");
   }
 
   @override
@@ -208,161 +229,66 @@ class _ReportGenerateState extends State<ReportGenerate> {
                                           height: 4,
                                         ),
                                         ConstrainedBox(
-                                          constraints: BoxConstraints.tightFor(
-                                              width: 350, height: 50),
-                                          child: !projectDropDown
-                                              ? FormField<String>(
-                                                  builder:
-                                                      (FormFieldState<String>
-                                                          state) {
-                                                    return InputDecorator(
-                                                      decoration:
-                                                          InputDecoration(
-                                                              // labelStyle: textStyle,
-                                                              errorStyle: TextStyle(
-                                                                  color: Colors
-                                                                      .redAccent,
-                                                                  fontSize:
-                                                                      16.0),
-                                                              hintText:
-                                                                  'Please select expense',
-                                                              border: OutlineInputBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5.0))),
-                                                      isEmpty:
-                                                          _currentSelectedValue ==
-                                                              '',
-                                                      child:
-                                                          DropdownButtonHideUnderline(
-                                                        child: DropdownButton<
-                                                            String>(
-                                                          value:
-                                                              _currentSelectedValue,
-                                                          isDense: true,
-                                                          onChanged:
-                                                              (newValue) {
-                                                            setState(() {
-                                                              _currentSelectedValue =
-                                                                  newValue
-                                                                      .toString();
-                                                              state.didChange(
-                                                                  newValue);
-                                                            });
-                                                          },
-                                                          items: <String>[
-                                                            'Morphfit',
-                                                            'Qbace',
-                                                            'TrueKarma',
-                                                            'ShopQ'
-                                                          ].map<
-                                                              DropdownMenuItem<
-                                                                  String>>((String
-                                                              value) {
-                                                            return DropdownMenuItem<
-                                                                String>(
-                                                              value: value,
-                                                              child:
-                                                                  Text(value),
-                                                            );
-                                                          }).toList(),
+                                            constraints:
+                                                BoxConstraints.tightFor(
+                                                    width: 350, height: 50),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color: Color.fromRGBO(
+                                                        0, 0, 0, 0.4),
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6)),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton(
+                                                  isExpanded: false,
+
+                                                  // value: true,
+                                                  items:
+                                                      project_list.map((item) {
+                                                    return new DropdownMenuItem(
+                                                      child: Container(
+                                                        width:
+                                                            150, //expand here
+                                                        child: new Text(
+                                                          item,
                                                         ),
                                                       ),
+                                                      value: item,
                                                     );
-                                                  },
-                                                )
-
-                                              //   isExpanded: true,
-                                              //   value: _currentSelectedValue,
-                                              //   icon: Icon(
-                                              //       Icons.arrow_drop_down),
-                                              //   iconSize: 24,
-                                              //   elevation: 16,
-                                              //   decoration: InputDecoration(
-                                              //       hintStyle:
-                                              //           GoogleFonts.poppins(
-                                              //               textStyle: TextStyle(
-                                              //                   fontWeight:
-                                              //                       FontWeight
-                                              //                           .w400,
-                                              //                   color: Colors
-                                              //                       .black)),
-                                              //       border: OutlineInputBorder(
-                                              //           borderSide:
-                                              //               BorderSide(
-                                              //                   color: Color
-                                              //                       .fromRGBO(
-                                              //                           0,
-                                              //                           0,
-                                              //                           0,
-                                              //                           0.4)),
-                                              //           borderRadius:
-                                              //               BorderRadius
-                                              //                   .circular(6))),
-                                              //   style: GoogleFonts.poppins(
-                                              //       textStyle: TextStyle(
-                                              //           fontWeight:
-                                              //               FontWeight.w400,
-                                              //           color: Colors.black)),
-                                              //   onChanged: (newValue) {
-                                              //     setState(() {
-                                              //       _currentSelectedValue =
-                                              //           newValue.toString();
-                                              //     });
-                                              //   },
-                                              //   items: <String>[
-                                              //     'Morphfit',
-                                              //     'Qbace',
-                                              //     'TrueKarma',
-                                              //     'ShopQ'
-                                              //   ].map<
-                                              //           DropdownMenuItem<
-                                              //               String>>(
-                                              //       (String value) {
-                                              //     return DropdownMenuItem<
-                                              //         String>(
-                                              //       value: value,
-                                              //       child: Text(value),
-                                              //     );
-                                              //   }).toList(),
-                                              // )
-                                              : TextFormField(
-                                                  readOnly: true,
-                                                  onTap: () {
+                                                  }).toList(),
+                                                  onChanged: (value) {
                                                     setState(() {
-                                                      projectDropDown = true;
+                                                      selectedProject = true;
+                                                      _currentSelectedValue =
+                                                          value.toString();
                                                     });
                                                   },
-                                                  decoration: InputDecoration(
-                                                      hintText: "Select",
-                                                      suffixIcon: Icon(
-                                                        Icons.arrow_drop_down,
-                                                        color: Colors.black,
-                                                      ),
-                                                      hintStyle:
-                                                          GoogleFonts.poppins(
-                                                              textStyle: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color: Colors
-                                                                      .black)),
-                                                      border: OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          0,
-                                                                          0,
-                                                                          0,
-                                                                          0.4)),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      6))),
+                                                  hint: Container(
+                                                    margin: EdgeInsets.all(8),
+                                                    // width: 150, //and here
+                                                    child: Text(
+                                                      selectedProject
+                                                          ? _currentSelectedValue
+                                                          : "Select ",
+                                                      style: GoogleFonts.poppins(
+                                                          textStyle: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400)),
+                                                    ),
+                                                  ),
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      decorationColor:
+                                                          Colors.red),
                                                 ),
-                                        ),
+                                              ),
+                                            ))
                                       ],
                                     ),
                                   ),
@@ -395,6 +321,7 @@ class _ReportGenerateState extends State<ReportGenerate> {
                                           constraints: BoxConstraints.tightFor(
                                               width: 350, height: 50),
                                           child: TextFormField(
+                                            controller: task_name,
                                             decoration: InputDecoration(
                                                 hintText: "Type here",
                                                 hintStyle: GoogleFonts.poppins(
@@ -437,6 +364,7 @@ class _ReportGenerateState extends State<ReportGenerate> {
                                           constraints: BoxConstraints.tightFor(
                                               width: 350, height: 50),
                                           child: TextFormField(
+                                            controller: issue_id,
                                             decoration: InputDecoration(
                                                 hintText: "Type here",
                                                 hintStyle: GoogleFonts.poppins(
@@ -493,6 +421,8 @@ class _ReportGenerateState extends State<ReportGenerate> {
                                                 context: context,
                                                 initialTime: selectedTime,
                                               );
+                                              print("Time Stamp" +
+                                                  picked.toString());
                                               if (picked != null)
                                                 setState(() {
                                                   selectedTime = picked;
@@ -664,99 +594,70 @@ class _ReportGenerateState extends State<ReportGenerate> {
                                           height: 4,
                                         ),
                                         ConstrainedBox(
-                                          constraints: BoxConstraints.tightFor(
-                                              width: 350, height: 50),
-                                          child: 1 == 1
-                                              ? FormField<String>(
-                                                  builder:
-                                                      (FormFieldState<String>
-                                                          state) {
-                                                    return InputDecorator(
-                                                      decoration:
-                                                          InputDecoration(
-                                                              // labelStyle: textStyle,
-                                                              errorStyle: TextStyle(
-                                                                  color: Colors
-                                                                      .redAccent,
-                                                                  fontSize:
-                                                                      16.0),
-                                                              hintText:
-                                                                  'Please select expense',
-                                                              border: OutlineInputBorder(
-                                                                  borderRadius:
-                                                                      BorderRadius
-                                                                          .circular(
-                                                                              5.0))),
-                                                      isEmpty:
-                                                          _currentSelectedStatus ==
-                                                              '',
-                                                      child:
-                                                          DropdownButtonHideUnderline(
-                                                        child: DropdownButton<
-                                                            String>(
-                                                          value:
-                                                              _currentSelectedStatus,
-                                                          isDense: true,
-                                                          onChanged:
-                                                              (newValue) {
-                                                            setState(() {
-                                                              _currentSelectedStatus =
-                                                                  newValue
-                                                                      .toString();
-                                                              state.didChange(
-                                                                  newValue);
-                                                            });
-                                                          },
-                                                          items: <String>[
-                                                            'In Progress',
-                                                            'Completed',
-                                                          ].map<
-                                                              DropdownMenuItem<
-                                                                  String>>((String
-                                                              value) {
-                                                            return DropdownMenuItem<
-                                                                String>(
-                                                              value: value,
-                                                              child:
-                                                                  Text(value),
-                                                            );
-                                                          }).toList(),
+                                            constraints:
+                                                BoxConstraints.tightFor(
+                                                    width: 350, height: 50),
+                                            child: Container(
+                                              decoration: BoxDecoration(
+                                                  border: Border.all(
+                                                    color: Color.fromRGBO(
+                                                        0, 0, 0, 0.4),
+                                                  ),
+                                                  borderRadius:
+                                                      BorderRadius.circular(6)),
+                                              child:
+                                                  DropdownButtonHideUnderline(
+                                                child: DropdownButton(
+                                                  isExpanded: false,
+
+                                                  // value: true,
+                                                  items:
+                                                      status_list.map((item) {
+                                                    return new DropdownMenuItem(
+                                                      child: Container(
+                                                        width:
+                                                            150, //expand here
+                                                        child: new Text(
+                                                          item,
                                                         ),
                                                       ),
+                                                      value: item,
                                                     );
+                                                  }).toList(),
+                                                  onChanged: (value) {
+                                                    setState(() {
+                                                      selectedStatus = true;
+                                                      print("RES" +
+                                                          _currentSelectedStatus);
+                                                      print("value" +
+                                                          value.toString());
+                                                      _currentSelectedStatus =
+                                                          value.toString();
+                                                    });
                                                   },
-                                                )
-                                              : TextFormField(
-                                                  readOnly: true,
-                                                  decoration: InputDecoration(
-                                                      hintText: "Select",
-                                                      suffixIcon: Icon(
-                                                        Icons.arrow_drop_down,
-                                                        color: Colors.black,
-                                                      ),
-                                                      hintStyle:
-                                                          GoogleFonts.poppins(
-                                                              textStyle: TextStyle(
-                                                                  fontWeight:
-                                                                      FontWeight
-                                                                          .w400,
-                                                                  color: Colors
-                                                                      .black)),
-                                                      border: OutlineInputBorder(
-                                                          borderSide:
-                                                              BorderSide(
-                                                                  color: Color
-                                                                      .fromRGBO(
-                                                                          0,
-                                                                          0,
-                                                                          0,
-                                                                          0.4)),
-                                                          borderRadius:
-                                                              BorderRadius
-                                                                  .circular(
-                                                                      6))),
+                                                  hint: Container(
+                                                    margin: EdgeInsets.all(8),
+                                                    // width: 150, //and here
+                                                    child: Text(
+                                                      selectedStatus
+                                                          ? _currentSelectedStatus
+                                                          : "Select ",
+                                                      style: GoogleFonts.poppins(
+                                                          textStyle: TextStyle(
+                                                              color:
+                                                                  Colors.black,
+                                                              fontWeight:
+                                                                  FontWeight
+                                                                      .w400)),
+                                                    ),
+                                                  ),
+                                                  style: TextStyle(
+                                                      color: Colors.black,
+                                                      decorationColor:
+                                                          Colors.red),
                                                 ),
-                                        )
+                                              ),
+                                            ))
                                       ],
                                     ),
                                   ),
@@ -828,6 +729,7 @@ class _ReportGenerateState extends State<ReportGenerate> {
                                 constraints:
                                     BoxConstraints.tightFor(width: 300),
                                 child: TextFormField(
+                                  controller: descriptions,
                                   minLines: 14,
                                   maxLines: 14,
                                   decoration: InputDecoration(
@@ -872,6 +774,7 @@ class _ReportGenerateState extends State<ReportGenerate> {
                 ],
               ),
             ),
+
             // Container(
             //   child: Column(
             //     children: [
@@ -1357,18 +1260,42 @@ class _ReportGenerateState extends State<ReportGenerate> {
                   SizedBox(
                     width: 12,
                   ),
-                  Container(
-                    padding: EdgeInsets.symmetric(vertical: 4, horizontal: 16),
-                    decoration: BoxDecoration(
-                        color: Color(0xFF295DC0),
-                        borderRadius: BorderRadius.circular(8),
-                        border: Border.all(color: Color(0xFF295DC0))),
-                    child: Text(
-                      "Save",
-                      style: GoogleFonts.poppins(
-                          textStyle: TextStyle(
-                        color: Color(0xFFffffff),
-                      )),
+                  GestureDetector(
+                    onTap: () {
+                      // log(dateController.text);
+                      // log(_currentSelectedValue);
+                      // log(task_name.text);
+                      // log(issue_id.text);
+                      // log(start_time.text);
+                      // log(end_time.text);
+                      // log(_currentSelectedStatus);
+                      // log(descriptions.text);
+                      controller.addTask(
+                          date: dateController.text,
+                          startTime: start_time.text,
+                          issueId: issue_id.text,
+                          endTime: end_time.text,
+                          projectName: _currentSelectedValue,
+                          taskName: task_name.text,
+                          status: _currentSelectedStatus,
+                          desc: descriptions.text,
+                          token: token.toString(),
+                          context: context);
+                    },
+                    child: Container(
+                      padding:
+                          EdgeInsets.symmetric(vertical: 4, horizontal: 16),
+                      decoration: BoxDecoration(
+                          color: Color(0xFF295DC0),
+                          borderRadius: BorderRadius.circular(8),
+                          border: Border.all(color: Color(0xFF295DC0))),
+                      child: Text(
+                        "Save",
+                        style: GoogleFonts.poppins(
+                            textStyle: TextStyle(
+                          color: Color(0xFFffffff),
+                        )),
+                      ),
                     ),
                   )
                 ],

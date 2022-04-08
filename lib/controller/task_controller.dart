@@ -5,54 +5,47 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:report_generator/controller/sign_in_controller.dart';
 
 import '../service/constant_urls.dart';
 import 'package:http/http.dart' as http;
 
 class TaskController {
-  final storage = FlutterSecureStorage();
   late String? value;
 
-  addTask(var date, var startTime, var endTime, String status, String taskName,
-      String desc, BuildContext context) async {
-    value = await storage.read(key: "token");
-    log("date" + date);
-    log("startTime" + startTime);
-    log("endTime" + endTime);
-    log("status" + status);
-    // log(email);
-    // log(password);
+  addTask(
+      {required String date,
+      required String startTime,
+      required String projectName,
+      required String endTime,
+      required String token,
+      required String status,
+      required String issueId,
+      required String taskName,
+      required String desc,
+      required BuildContext context}) async {
+    print("HAI");
+    log(date);
+    // print("EXE");
+    // print("EXE1");
+    // // SignInController controller = SignInController();
+    // print("TOKEN" + token.toString());
+
+    // log("date" + date);
+    // log("startTime" + startTime);
+    // log("endTime" + endTime);
+    // log("status" + status);
     var headers = {
-      // HttpHeaders.contentTypeHeader: 'application/json',
-      HttpHeaders.authorizationHeader: 'Bearer $value',
-      // "Access-Control-Allow-Origin": "*",
-      // "Access-Control-Allow-Methods": "POST, OPTIONS"
+      HttpHeaders.authorizationHeader: 'Bearer $token',
     };
     String url = "${URLS.baseURL}${URLS.addTask}";
     log("URL:" + url);
-// {
-//     "userId":"1002",
-//     "projectId":"1002",
-//     "date":"04/04/2022",
-//     "projectName": "Morphfit",
-//     "tasks":[
-//         {
-//             "issueId":"AB02",
-//             "taskName": "Task UI",
-//             "status": "In Progress",
-//             "startTime":"12:30 PM",
-//             "endTime": "14:30 PM",
-//             "description": "Task UI InCompleted"
-//         }
-
-//     ]
-
-// }
     Map<String, dynamic> params = {
       "date": date,
-      "projectName": "Qbace",
+      "projectName": projectName,
       "userId": "1002",
       "projectId": "1002",
+      "issueId": issueId,
       "taskName": taskName,
       "status": status,
       "startTime": startTime,
@@ -68,41 +61,18 @@ class TaskController {
       if (response.statusCode == 200) {
         var data = jsonDecode(response.body);
         print(data);
-        // if (data["success"] == true) {
-        //   print("ADDED");
-        //   print(data["data"]["token"]["token"]);
-        //   Fluttertoast.showToast(
-        //       msg: "Login success",
-        //       toastLength: Toast.LENGTH_SHORT,
-        //       gravity: ToastGravity.CENTER,
-        //       timeInSecForIosWeb: 3,
-        //       backgroundColor: Colors.green,
-        //       textColor: Colors.white,
-        //       fontSize: 16.0);
-
-        //   // await storage.write(
-        //   //     key: "token", value: data["data"]["token"]["token"]);
-        //   // Future.delayed(const Duration(milliseconds: 500), () {
-        //   //   Navigator.of(context)
-        //   //       .push(MaterialPageRoute(builder: (context) => TaskPage()));
-        //   // });
-        // }
+        if (data["success"] == true) {
+          print("Task Added");
+        } else {
+          print("No Task Added");
+        }
       }
-      //  else if (response.statusCode == 500) {
-      //     print("Internal server error");
-      //   } else if (response.statusCode == 404) {
-      //     print("Invalid Email or Password");
-      //   } else {
-      //     print("Retry");
-      //   }
     } catch (e) {
       print(e.toString());
     }
   }
 
   Future getProjectName() async {
-    value = await storage.read(key: "token");
-
     var headers = {HttpHeaders.authorizationHeader: 'Bearer $value'};
     List projectsName = [];
     try {

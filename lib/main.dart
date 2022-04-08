@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:report_generator/controller/sign_in_controller.dart';
+import 'package:report_generator/sandbox/sandbox1.dart';
+import 'package:report_generator/screens/history_page.dart';
 import 'package:report_generator/screens/home_page.dart';
 import 'package:report_generator/screens/sign_in.dart';
 
@@ -37,17 +40,21 @@ class _MyAppState extends State<MyApp> {
   }
 
   check() async {
+    SignInController controller = SignInController();
     value = await storage.read(key: "token");
+    controller.addValue.add(controller.token = value.toString());
     id = await storage.read(key: "id");
     print(value);
     print(id);
+    print("CC");
+    print(controller.token);
     if (value == null) {
       setState(() {
-        home = ReportGenerate();
+        home = HistoryPage();
       });
     } else {
       setState(() {
-        home = HomePage();
+        home = HistoryPage();
       });
     }
   }

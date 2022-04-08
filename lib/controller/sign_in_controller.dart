@@ -1,15 +1,22 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:report_generator/screens/report_generate_page.dart';
 
 import '../screens/task_page.dart';
 import '../service/constant_urls.dart';
 
 class SignInController {
   final storage = FlutterSecureStorage();
+  String token = "";
+  final stateStream = StreamController();
+  StreamSink get addValue => stateStream.sink;
+  Stream get getValue => stateStream.stream;
+
   login(String email, String password, BuildContext context) async {
     log(email);
     log(password);
@@ -54,8 +61,8 @@ class SignInController {
             value: data["data"]["token"]["token"],
           );
           Future.delayed(const Duration(milliseconds: 500), () {
-            Navigator.of(context)
-                .push(MaterialPageRoute(builder: (context) => TaskPage()));
+            Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => ReportGenerate()));
           });
         }
       } else if (response.statusCode == 500) {

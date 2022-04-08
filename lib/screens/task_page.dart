@@ -446,14 +446,14 @@ class _TaskPageState extends State<TaskPage>
                                   GestureDetector(
                                     onTap: () {
                                       log("STATUS:--> " + status.toString());
-                                      controller.addTask(
-                                          dateController.text,
-                                          startTimeController.text,
-                                          endTimeController.text,
-                                          status,
-                                          taskName.text,
-                                          taskDescription.text,
-                                          context);
+                                      // controller.addTask(
+                                      //     dateController.text,
+                                      //     startTimeController.text,
+                                      //     endTimeController.text,
+                                      //     status,
+                                      //     taskName.text,
+                                      //     taskDescription.text,
+                                      //     context);
                                     },
                                     child: Container(
                                       margin:
