@@ -244,8 +244,7 @@ class _ReportGenerateState extends State<ReportGenerate> {
                                                   DropdownButtonHideUnderline(
                                                 child: DropdownButton(
                                                   isExpanded: false,
-
-                                                  // value: true,
+                                                  value: _currentSelectedValue,
                                                   items:
                                                       project_list.map((item) {
                                                     return new DropdownMenuItem(

@@ -20,6 +20,10 @@ dependencies:
   fluttertoast: ^8.0.9
   intl: ^0.17.0
   font_awesome_flutter: ^10.1.0
+  syncfusion_flutter_datagrid: ^20.1.47
+  syncfusion_flutter_datepicker: ^20.1.47
+  syncfusion_flutter_xlsio: ^20.1.47-beta.1
+
   # dropdown_formfield: ^0.1.4  
 
 
